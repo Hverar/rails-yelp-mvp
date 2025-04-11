@@ -1,0 +1,44 @@
+<h1><%= @restaurant.name %></h1>
+
+<p>
+  <strong>Address:</strong> <%= @restaurant.address %><br>
+  <strong>Phone:</strong> <%= @restaurant.phone_number %><br>
+  <strong>Category:</strong> <%= @restaurant.category %>
+</p>
+<p>
+  <strong>Average Rating:</strong>
+  <% if @restaurant.reviews.any? %>
+    <%= sprintf("%.1f", @restaurant.reviews.average(:rating)) %>/5
+    <% avg = @restaurant.reviews.average(:rating).round %>
+    <%= "★" * avg + "☆" * (5 - avg) %>
+  <% else %>
+    No reviews yet
+  <% end %>
+</p>
+
+<hr>
+
+<h2>Reviews</h2>
+
+<% if @restaurant.reviews.any? %>
+  <ul>
+    <% @restaurant.reviews.each do |review| %>
+      <li><strong>Rating:</strong> <%= review.rating %>/5<br><%= review.content %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No reviews yet.</p>
+<% end %>
+
+<hr>
+
+<h3 id="review-form">Add Your Review</h3>
+
+<%= simple_form_for [@restaurant, @review] do |f| %>
+  <%= f.input :rating, collection: 0..5, prompt: "Select a rating" %>
+  <%= f.input :content %>
+  <%= f.button :submit, class: "btn btn-primary" %>
+<% end %>
+
+<hr>
+<%= link_to "Back to all restaurants", restaurants_path, class: "btn btn-outline-dark mt-3" %>

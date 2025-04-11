@@ -1,0 +1,39 @@
+<h1 class="mb-4 text-center">Restaurants</h1>
+
+<%= form_with url: restaurants_path, method: :get, local: true, class: "mb-4 row g-2" do %>
+  <div class="col-md-4">
+    <%= text_field_tag :query, params[:query], placeholder: "Search by name...", class: "form-control" %>
+  </div>
+  <div class="col-md-4">
+    <%= select_tag :category, options_for_select(["All"] + %w[chinese italian japanese french belgian], params[:category]), class: "form-select" %>
+  </div>
+  <div class="col-md-4">
+    <%= submit_tag "Search", class: "btn btn-outline-primary w-100" %>
+  </div>
+<% end %>
+
+<div class="row">
+  <% @restaurants.each do |restaurant| %>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title"><%= restaurant.name %></h5>
+          <p class="card-text">
+            Category: <%= restaurant.category.capitalize %><br>
+            Address: <%= restaurant.address %><br>
+            <strong><%= pluralize(restaurant.reviews.count, "review") %></strong><br>
+            Average Rating:
+            <% if restaurant.reviews.any? %>
+              <%= sprintf("%.1f", restaurant.reviews.average(:rating)) %>/5
+              <% avg = restaurant.reviews.average(:rating).round %>
+              <%= "★" * avg + "☆" * (5 - avg) %>
+            <% else %>
+              No ratings yet
+            <% end %>
+          </p>
+          <%= link_to "See details", restaurant_path(restaurant), class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
